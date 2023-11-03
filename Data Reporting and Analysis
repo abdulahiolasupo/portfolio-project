@@ -1,0 +1,440 @@
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name = 'PENELOPE'
+OR actor_id < 5
+OR first_name = 'NICK'
+OR first_name = 'ED';
+
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name IN ('JOHN', 'JANE');
+
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name LIKE 'JOHN%';
+#WHERE first_name LIKE 'JA_NE'
+
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name NOT IN ('NICK','ED','PENELOPE');
+
+SELECT first_name, last_name
+FROM actor
+WHERE first_name != 'PENELOPE';
+
+SELECT first_name, last_name, actor_id
+FROM actor
+WHERE actor_id >= 5;
+
+SELECT first_name, last_name, actor_id
+FROM actor
+WHERE actor_id >5
+AND actor_id < 7;
+
+SELECT first_name, last_name, actor_id
+FROM actor
+WHERE actor_id BETWEEN 3 AND 6;
+
+SELECT * FROM address
+WHERE district = 'Tahiti'
+AND (address LIKE '%Sai%' OR address LIKE '%Lou%');
+
+SELECT * FROM address
+WHERE district = 'Buenos Aires'
+AND (address LIKE '%EL%' OR '%AL%');
+
+SELECT actor_id, first_name, last_name
+FROM actor
+WHERE first_name = 'PENELOPE'
+ORDER BY last_name;
+
+SELECT first_name, LENGTH(first_name)
+FROM actor;
+
+SELECT CONCAT(first_name, " ", last_name)
+FROM actor;
+
+SELECT CONCAT(first_name, " ", last_name), 
+LENGTH(CONCAT(first_name, " ", last_name))
+FROM actor
+ORDER BY LENGTH(CONCAT(first_name, " ", last_name)) DESC;
+
+SELECT LOWER(first_name)
+FROM actor;
+
+SELECT LEFT(first_name, 1)
+FROM actor;
+
+SELECT CONCAT(LEFT(first_name,1),LOWER(RIGHT(first_name,7)))
+FROM actor;
+
+SELECT CONCAT(LEFT(first_name,1),LOWER(RIGHT(first_name,length(first_name)-1))) 
+FROM actor;
+
+
+
+###"LOCATE" IS PART OF TRIM FUNCTION ###
+
+
+SELECT CONCAT(first_name, " ", last_name),length(concat(first_name, " ", last_name))
+FROM customers
+ORDER BY length(concat(first_name, " ", last_name)) DESC;
+
+## ABOVE INFORMATION SHOW THE LONGEST CHARACTER IN THE DATABASE ##
+
+SELECT UPPER(first_name)
+FROM customers;
+
+SELECT LEFT(first_name, 1)
+FROM customers;
+
+SELECT CONCAT(LEFT(first_name,1), LOWER(RIGHT(first_name,length(first_name)-1)))
+FROM customers;
+
+SELECT substring(first_name,1,2)
+FROM customers;
+
+SELECT substring(first_name,2,1)
+FROM customers;
+
+SELECT substring(first_name,2)
+FROM customers;
+
+SELECT substring(first_name, -4)
+FROM customers;
+
+SELECT CONCAT(substring(first_name,1,1),LOWER(substring(first_name,2)))
+FROM customers;
+
+SELECT *
+FROM customers
+WHERE TRIM(first_name) =        'Freddi';
+### TRIM is used to adjust the big space that i kept before 'Freddi' ###
+### TRIM is really useful for removing unwanted spaces in your data ####
+
+
+#### TRIM from phpadmin.net platform #####
+SELECT description as original, TRIM(leading 'A ' from description) as modified
+FROM film_text;
+
+### LOCATE IS PART OF TRIM FUNCTION ###
+SELECT locate('Frey', last_name)
+FROM customers;
+
+
+SELECT CONCAT(first_name, " ", last_name) as Name,length(concat(first_name, " ", last_name)) as len
+FROM customers
+WHERE length(concat(first_name, " ", last_name)) > 15
+ORDER BY length(concat(first_name, " ", last_name)) DESC;
+
+### THIS BELOW QUERIES IS THIS SAME AS ABOVE BUT WRITTEN MORE EFFICIENT ###
+SELECT CONCAT(first_name, " ", last_name) as Name,length(concat(first_name, " ", last_name)) as len
+FROM customers
+WHERE length(concat(first_name, " ", last_name)) > 14
+ORDER BY len DESC;
+
+####### DATE FUNCTIONS FROM PHPADMIN PLATFORM #####
+SELECT * 
+FROM address
+WHERE last_update = '2006-02-15 04:45:30';
+
+SELECT * 
+FROM address
+WHERE YEAR(last_update) = 2006;
+
+SELECT * 
+FROM address
+WHERE DATE(last_update) = '2006-02-15';
+
+
+####### DATE FORMAT FROM PHPADMIN PLATFORM #####
+SELECT DATE_FORMAT(last_update,'%m-%d-%Y')
+FROM address;
+
+######$$$ ANOTHER DATE FORMAT FROM PHPADMIN PLATFORM ###$$$$
+SELECT DATE_FORMAT(last_update,'%D %M %Y')
+FROM address;
+
+
+SELECT * 
+FROM film
+WHERE description LIKE '%Drama%'
+AND(rating = 'G' OR rating = 'PG');
+
+SELECT *
+FROM film
+WHERE rating IN('G','PG')
+AND description LIKE '%Drama%';
+
+SELECT CONCAT(LEFT(title,1),LOWER(RIGHT(title,length(title)-1))) as title
+FROM film;
+
+SELECT CONCAT(SUBSTRING(title,1,1), LOWER(SUBSTRING(title,2))) as title
+FROM film;
+
+SELECT LOCATE('lope', first_name)
+ FROM actor;
+
+
+###TO COUNT HOW MANY ROWS IN YOUR TABLE########
+SELECT count(*)
+FROM address;
+
+SELECT CONCAT(first_name, " ", last_name),length(concat(first_name, " ", last_name))
+FROM customers
+ORDER BY length(concat(first_name, " ", last_name)) DESC;
+## ABOVE INFORMATION SHOW THE LONGEST CHARACTER IN THE DATABASE ##
+
+SELECT UPPER(first_name)
+FROM customers;
+
+SELECT LEFT(first_name, 1)
+FROM customers;
+
+SELECT CONCAT(LEFT(first_name,1), LOWER(RIGHT(first_name,length(first_name)-1)))
+FROM customers;
+
+SELECT substring(first_name,1,2)
+FROM customers;
+
+SELECT substring(first_name,2,1)
+FROM customers;
+
+SELECT substring(first_name,2)
+FROM customers;
+
+SELECT substring(first_name, -4)
+FROM customers;
+
+SELECT CONCAT(substring(first_name,1,1),LOWER(substring(first_name,2)))
+FROM customers;
+
+SELECT *
+FROM customers
+WHERE TRIM(first_name) =        'Freddi';
+### TRIM is used to adjust the big space that i kept before 'Freddi' ###
+### TRIM is really useful for removing unwanted spaces in your data ####
+
+
+#### TRIM from phpadmin.net platform #####
+#SELECT description as original, TRIM(leading 'A ' from description) as modified
+#FROM film_text;
+
+### LOCATE IS PART OF TRIM FUNCTION ###
+SELECT locate('Frey', last_name)
+FROM customers;
+
+
+SELECT CONCAT(first_name, " ", last_name) as Name,length(concat(first_name, " ", last_name)) as len
+FROM customers
+WHERE length(concat(first_name, " ", last_name)) > 15
+ORDER BY length(concat(first_name, " ", last_name)) DESC;
+
+### THIS BELOW QUERIES IS THIS SAME AS ABOVE BUT WRITTEN MORE EFFICIENT ###
+SELECT CONCAT(first_name, " ", last_name) as Name,length(concat(first_name, " ", last_name)) as len
+FROM customers
+WHERE length(concat(first_name, " ", last_name)) > 14
+ORDER BY len DESC;
+
+####### DATE FUNCTIONS FROM PHPADMIN PLATFORM #####
+SELECT * 
+FROM address
+WHERE last_update = '2006-02-15 04:45:30';
+
+SELECT * 
+FROM address
+WHERE YEAR(last_update) = 2006;
+
+SELECT * 
+FROM address
+WHERE DATE(last_update) = '2006-02-15';
+
+
+####### DATE FORMAT FROM PHPADMIN PLATFORM #####
+SELECT DATE_FORMAT(last_update,'%m-%d-%Y')
+FROM address;
+
+######$$$ ANOTHER DATE FORMAT FROM PHPADMIN PLATFORM ###$$$$
+SELECT DATE_FORMAT(last_update,'%D %M %Y')
+FROM address;
+
+SELECT *
+FROM address
+WHERE address2 IS NULL;
+
+SELECT count(*)
+FROM address
+WHERE address2 IS NULL;
+
+###TO RETREIVE THE FIELD AND THE COUNT AT THE SAME TIME ####
+###AGGREGATE FUNCTION SUCH AS COUNT SHOULD BE USED WITH GROUP BY FUNCTION###
+
+SELECT district, count(*) as ct
+FROM address
+WHERE address_id < 10
+GROUP BY district
+ORDER BY ct DESC;
+
+### HOW TO FILTER ON AN AGGREGATE COLOUMN USING HAVING ####
+
+SELECT district, count(*) as ct
+FROM address
+WHERE district LIKE '%B%'
+GROUP BY district
+HAVING ct > 8
+ORDER BY ct DESC;
+
+
+SELECT MIN(rental_duration)
+FROM film;
+
+SELECT MAX(rental_duration)
+FROM film;
+
+SELECT AVG(rental_duration)
+FROM film;
+
+SELECT rating, SUM(rental_duration)
+FROM film
+GROUP BY rating;
+
+
+SELECT YEAR(last_update)
+FROM actor;
+
+SELECT AVG(YEAR(last_update))
+FROM actor;
+
+
+#### DISTINCT FUNCTION IS USED TO REMOVE DUPLICATE VALUE ###$$$$$
+SELECT DISTINCT district
+FROM address;
+
+
+SELECT DISTINCT district, address
+FROM address;
+
+
+SELECT *
+FROM rental;
+
+SELECT DISTINCT staff_id
+FROM rental;
+
+SELECT DISTINCT customer_id
+FROM rental;
+
+### TO KNOW WHICH CUSTOMER HAS BEEN SERVED BY WHICH STAFF$$#####
+SELECT staff_id, customer_id
+FROM rental;
+
+###$$$ IT COUNTS DISTRICT WITH THE SPECIFIC NUMBER OF TIMES THEY APPEAR IN THE DATASET ###$$$
+SELECT district, count(*)
+FROM address
+GROUP BY district;
+
+####$$$ TO GET UNIQUE DISTRICT IN DATA SET ###$$$
+SELECT DISTINCT district
+FROM address;
+
+### TO KNOW WHICH CUSTOMER HAS BEEN SERVED BY WHICH STAFF$$#####
+SELECT staff_id, customer_id
+FROM rental;
+
+SELECT DISTINCT customer_id, inventory_id
+FROM rental;
+
+SELECT CONCAT(customer_id,inventory_id) as conc, count(*) as ct
+FROM rental
+GROUP BY conc 
+ORDER BY ct DESC;
+
+SELECT CONCAT(customer_id, '_', inventory_id) as conc, count(*) as ct
+FROM rental
+GROUP BY conc 
+ORDER BY ct DESC;
+
+###%%% DATE FUNCTION CAN ALSO BE USED WITH DISTINCT ####%%%
+SELECT DISTINCT YEAR(last_update)
+FROM address;
+
+SELECT COUNT(DISTINCT district)
+FROM address;
+
+
+###%%%$$ MERGE ROWS WITH GROUP BY ##$$$%%
+
+SELECT district, GROUP_CONCAT(phone ORDER BY phone ASC SEPARATOR ';')
+FROM address
+GROUP BY district;
+
+
+SELECT rating, count(*) 
+FROM film
+WHERE length < 90
+GROUP BY rating
+HAVING avg(replacement_cost) < 20;
+
+
+SELECT *
+FROM payment
+LIMIT 5;
+
+
+##$$$ ASSUMING WE WANT REPORT SHOWS ALL CUSTOMERS & ADDRESS WHERE DISTRICT FALLS IN BUENOS AIRES ###$$
+SELECT c.first_name, c.last_name, a.address, a.district
+FROM customer c
+JOIN address a
+ON c.address_id = a.address_id
+WHERE district = 'Buenos Aires';
+
+
+SELECT address as tbl, DATE(last_update)
+FROM address;
+
+SELECT 'address' as tbl, DATE(last_update)
+FROM address
+UNION ALL
+SELECT 'actor' as tbl, DATE(last_update)
+FROM actor;
+
+
+##$$$ UNION FUNCTION ALSO WORK AS DISTINCT FUNCTION ###$$$$
+SELECT 'address' as tbl, city_id, address_id
+FROM address
+WHERE address_id < 5
+UNION ALL
+SELECT 'actor' as tbl, DATE(last_update), actor_id
+FROM actor
+WHERE actor_id < 5;
+
+
+####$$$$ MERGE DATA ACROSS TABLE WITH "IN" FUNCTION ###$$$$
+SELECT *
+FROM rental WHERE customer_id IN (
+
+SELECT customer_id FROM customer
+WHERE first_name = 'MARY'
+);
+
+
+####$$$$ SELECT FROM A SELECTION WITH SUBQUERIES ##$$$$$$
+SELECT f.first_name FROM
+(SELECT first_name  FROM customer) as f;
+
+SELECT *
+FROM film_category as fc
+JOIN film f ON
+fc.film_id = f.film_id
+JOIN category c 
+ON fc.category_id = c.category_id
+WHERE c.name = 'Comedy';
+
+SELECT description, c.name
+FROM film_category as fc
+JOIN film f ON
+fc.film_id = f.film_id
+JOIN category c 
+ON fc.category_id = c.category_id
+WHERE c.name = 'Comedy';
+
