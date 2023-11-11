@@ -1,0 +1,414 @@
+### SQL INTERMEDIATE ####
+SELECT substr(name,1)
+FROM category;
+
+SELECT substr(name,2)
+FROM category;
+
+### it means start from position 1 and return three letters ##
+SELECT substr(name,1,3) 
+FROM category;  
+
+### it can also read from the back #### it returns last 3 letters ###3
+SELECT substr(name,-3) 
+FROM category; 
+
+#### TRIM ###%%%%
+SELECT description
+FROM film;
+
+SELECT trim(description) as trimmed
+FROM film;
+
+### TO REMOVE THE FIRST LETTER OR WORD FROM THE BEGINNG OF A SENTENCE ####
+SELECT TRIM(leading 'A ' from description) as trimmed
+FROM film;
+
+### 'TRAILING' can also be used to strip characters from the end of the string. ####
+### 'BOTH' can also be used to take characters from both end of the string.#####
+####$$$ IN MICROSOFT T-SQL, USE 'LTRIM' to trim string from LEFT and RTRIM vice-versal###$$
+### TO ADD CHARACTERS TO STRING CALLED PADDING. 'LPAD' OR 'RPAD' string functions ####
+## TO add a particular length ###
+
+SELECT LPAD(city_id,3,'0')
+FROM address;
+
+
+####$$$ CONCATENATION (CONCAT) $$$###
+SELECT first_name, last_name
+FROM customer;
+
+### NOW TO CONCAT FIRST AND LASTNAME ###
+SELECT CONCAT(first_name, ' ', last_name) AS FullName
+FROM customer;
+
+
+#### 'REPLACE' FUNCTION ####Below Expl-Says within string 'ABC ABC ABC' find 'A' and replace with 'B' ###
+SELECT replace('ABC ABC ABC','A','C');
+
+SELECT length(address) as original,
+##replace all spaces in address with nothing###
+length(replace(address,' ','')) as new,
+length(address)+1-length(replace(address,' ','')) as numwords
+FROM address;
+
+
+###USE NUMBER FUNCTIONS WITH GROUPED DATA ### CONCATENATE WITH SEPERATOR (CONCAT_WS) ###
+##Que:Have Movie Rentals become Cheaper Over Time? 
+SELECT CONCAT_WS('_',YEAR(payment_date),MONTH(payment_date)) as yr_mth,
+AVG(amount), count(*)
+FROM payment
+GROUP BY yr_mth;
+
+
+###$$$$$$$$ ROUND ####$$$$$
+
+SELECT amount, round(amount,0) as ApproxAmount
+FROM payment;
+
+###$$$ CEIL FUNCTION CAN BE USED TO ROUND UP FIGURES ALSO ###$$$$
+SELECT amount, ceil(amount) ApproxAmount
+FROM payment;
+
+####$$$ FLOOR FUNCTION CAN BE USED TO ROUND DOWN ##$$$
+SELECT amount, floor(amount) as ApproxAmount
+FROM payment;
+
+###$$$ 'TRUNCATE' FUNCTION WORK EXACTLY THE SAME AS 'FLOOR' FUNCTION i.e 'ROUND DOWN'
+SELECT amount, truncate(amount,0) as ApproxAmount
+FROM payment;
+
+####$$ 'INTERVAL' FUNCTION IS USED TO COMPARE THE DIFFERENCE BETWEEN NUMBERS ##
+SELECT amount, interval(amount,1,2,3,4,5,6,7)
+FROM payment;
+
+
+####$$$$ 'MOD' FUNCTION IS USED FOR DIVISION ##$$$
+SELECT payment_id,MOD(payment_id,5)
+FROM payment;
+### THE OUTPUT or RESULT is remainder after payment_id was divided by 5 ####
+
+##$$$ Que: Find correlation between rental cost and film category? ####
+##Another word: Compare if different categories of film tend to have different rental amount. $$$# 
+
+SELECT c.name, AVG(amount), count(*)
+FROM payment p 
+JOIN rental r ON p.rental_id = r.rental_id
+JOIN inventory i ON i.inventory_id = r.inventory_id
+JOIN film_category fc ON fc.film_id = i.film_id
+JOIN category c ON c.category_id = fc.category_id
+GROUP BY name
+ORDER BY AVG(amount) ASC;
+
+
+####$$$$Que: You want to know if there is a diference in the average rental cost of a film they have rented out by staff, during 2006.
+## Hint:Payment and Staff tables, compare the average cost of the amount by staff member.
+## Limit yourself to rentals in 2006, reporting two columns, one containing the full name from the staff stable and other column is average(amount) from the payment table.
+## The result is two rows only cos it's only 2staff member, (Use number functions, string functions and date functions
+SELECT CONCAT(s.first_name, ' ', s.last_name), AVG(p.amount), s.staff_id
+FROM payment p JOIN staff s ON 
+s.staff_id = p.staff_id
+WHERE YEAR(p.payment_date) = 2006
+GROUP BY s.staff_id;
+
+
+####$$$$$ EDITING DATA ###$$$$$It's extremely important to use a 'WHERE' clause on the 'UPDATE' statement.
+####it's best practice to run a 'SELECT' statement with the same filters before you run the 'UPDATE' statement, 
+##just so you can eyeball the rows that you're planning on changing.
+
+UPDATE actor
+SET first_name = 'Penny' 
+WHERE actor_id = 1;
+
+UPDATE staff
+SET last_name = 'Hitler'
+WHERE staff_id = 1;
+
+###$$ TO UPDATE CREATE DATE TO BE THE SAME AS LAST UPDATE DATE ON Customer Table
+UPDATE customer
+SET create_date = last_update
+WHERE customer_id = 2;
+
+###$$TO UPDATE MULTIPLE ROWS, ASSUMING WE WANT TO SUFFIX ALL FILM CATEGORIES WITH WORD'Category' AT THE
+### END OF ALL FILM CATEGORY. 
+
+UPDATE category
+SET name = CONCAT(name,' category');
+
+
+### TO UPDATE mulTIPLE COLUMNS AT ONCE
+UPDATE film
+SET title = 'ACADEMY DINO LIGER', description = SUBSTR(description,3)
+WHERE film_id = 1;
+
+##YOU MIGHT RECEIVE ERROR MESSG IF THE VARCHAR OF THE FIELD YOU ARE UPDATING IS LESS THAN VARCHAR OF WHAT 
+##YOU WANT TO UPDATE WITH. 
+UPDATE language
+SET name = 'AlaskaOhioAlabamaPhiladephi'
+WHERE language_id = 1;
+
+
+SELECT name, length(name)
+FROM language;
+
+UPDATE customer
+SET address_id = 600
+WHERE customer_id = 1;
+
+###$NOTE: Your Query can fail or change your update unexpectedly due to 'NULL' values,
+## 'DATA TYPE' mismatch, 'CONSTRAINTS', OR Other pple locking your database. 
+
+
+## What if you need to run hundreds of update with slightly different values or filters?
+## THEN CONSIDER 'AUTOMATING QUERY CREATION'
+
+## NOTE: You can run multiple queries by seperating them with semicolom(;)
+UPDATE film 
+SET title = 'abc'
+WHERE film_id = 1;
+UPDATE film 
+SET title = 'def'
+WHERE film_id = 2;
+
+##TO RETURN IT BACK TO WHAT IT WAS...
+UPDATE film 
+SET title = 'ACADEMY DINO LIGER'
+WHERE film_id = 1;
+UPDATE film 
+SET title = 'ACE GOLDFINGER'
+WHERE film_id = 2;
+
+
+
+###$$$UPDATING A FIELD USING 'JOIN' FUNCTION, USING UPDATE COMMAND WITH 'JOIN'
+## Sometimes we want to update one TABLE using a value from different TABLE. 
+SELECT * FROM
+payment p JOIN rental r 
+ON p.rental_id = r.rental_id;
+### THEN YOU SAY ###
+
+## NOTE:USING COMMAND UPDATE WITH 'JOIN' FUNCTION
+UPDATE payment p JOIN rental r 
+ON p.rental_id = r.rental_id
+SET p.payment_date = r.return_date
+WHERE r.rental_id = 1;
+
+
+##$$$UPDATING DYNAMICALLY: USING UPDATE COMMAND WITH SUBQUERY
+##NOTE CREATE DATE AND LAST_UPDATE FROM THE TWO TABLES ARE OF THE SAME DATA TYPE. 
+#Hint:First create innerquery(subquery) THEN create OUTERQUERY.  
+UPDATE customer
+SET create_date = (SELECT last_update FROM payment
+WHERE payment_id = 1)
+WHERE customer_id = 1;
+
+
+###$$ANOTHER WAY TO UPDATE DYNAMICALLY IS TO USE CONDITIONAL LOGIC. 
+## Run an update only where records exist or matches. This is very common needs
+SELECT * FROM film 
+WHERE film_id NOT IN  
+(SELECT film_id FROM inventory);
+
+## Assuming we want to flag all of those films that are not in stock(inventory) from the film TABLE
+UPDATE film
+SET release_year = 1970
+WHERE film_id NOT IN
+(SELECT film_id FROM inventory);
+ 
+ 
+ 
+ ###$$ANOTHER WAY TO UPDATE DYNAMICALLY IS TO USE IF AND ELSE CONDITIONAL STATEMENT
+ 
+ SELECT active, count(*)
+ FROM customer
+GROUP BY active;
+
+
+UPDATE customer
+SET email =IF(active=0, NULL, email);
+
+
+UPDATE film
+SET original_language_id = 6
+WHERE film_id = 1;
+
+SELECT distinct original_language_id
+FROM film;
+
+UPDATE film
+SET original_language_id = 2 WHERE left(title,1) = 'A';
+UPDATE film
+SET original_language_id = 3 WHERE left(title,1) = 'B';
+
+
+###$$$ USING CASE STATEMENT, SET original_language_id to 2 when it is 3 and vice versal
+UPDATE film
+SET original_language_id = 
+CASE WHEN original_language_id = 2 THEN 3
+     WHEN original_language_id = 3 THEN 2
+     END;
+
+##ALWAYS CHECK WHAT YOU UPDATE
+SELECT DISTINCT left(title,1),language_id,original_language_id
+FROM film;
+
+UPDATE film
+SET language_id = 1 WHERE LEFT(title,1) = 'A';
+UPDATE film
+SET language_id = 2 WHERE LEFT(title,1) = 'B';
+UPDATE film
+SET language_id = 3 WHERE LEFT(title,1) = 'C';
+
+
+UPDATE film
+SET original_language_id = 
+CASE
+WHEN language_id = 3 then 1
+ELSE 6
+END;
+
+### Que:#You noticed that the release_year column in the film table is wrong
+## it should contain the year from the last update column of the film_category table. 
+UPDATE film f 
+JOIN film_category fc
+ON f.film_id = fc.film_id
+SET f.release_year = year(fc.last_update);
+
+
+
+####$$$$$ INSERT ####$$$$$
+SELECT max(country_id)
+FROM country;
+
+INSERT INTO country
+VALUES(110, 'UNITED ARAB EMIRATES', "2008-01-15");
+
+SELECT * FROM country
+ORDER BY country_id DESC;
+
+### Country_id is Auto-Increment
+INSERT INTO country
+VALUES(NULL, 'FINLAND', "2019-02-05");
+
+### Variables Such As current_timestamp is really useful
+INSERT INTO country
+VALUES(NULL, 'CANADA', current_timestamp());
+
+##NOTE: Below query also work without specify another field because both Country_id and last_update
+## are set in database to be Auto-increase and current_date respectively. 
+INSERT INTO country(country)
+VALUES('LONDON');
+
+
+### COMMON ISSUE WITH INSERT COMMAND ARE DATA TYPE OR VIOLATING CONSTRAINT LIKE NOT NULL, UNIQUE, KEY CONSTRAINTS
+
+INSERT INTO film_category(film_id,category_id)
+VALUES(1,16);
+
+
+
+### USING MERGE INSTEAD OF UPDATE/INSERT 
+## NEED TO LOOK FURTHER
+
+
+####$$$$ DUPLICATE TABLE WITH SELECT. Assuming you want to test set of queries on a TABLE
+## without any chance of affecting the original data. 
+## There is no any link between the new TABLE and later one. You could delete new TABLE and it 
+## will not affect the later TABLE
+
+CREATE TABLE category2 AS SELECT * FROM category;
+CREATE TABLE customer2 AS SELECT * FROM customer;
+
+### USE OF TRUNCATE TO DELETE TABLE; TRUNCATE/DELETE COMMAND DOES THE SAME THING
+TRUNCATE category2;
+
+### AGAIN INPUT VALUES
+INSERT INTO category2
+VALUES(9, 'Animation Category', "2016-05-03");
+
+TRUNCATE category2;
+
+INSERT INTO category2
+SELECT * FROM category;
+
+INSERT INTO film
+VALUES(0, 'A merciful world','Epic Drama',"2006", 1, 6, 6, 0.99,86,20.99,'PG', 'Trailers', "2012-05-06");
+
+
+#### DELETE DATA, ALWAYS USE "WHERE" CLAUSE WHEN DELETING FROM THE TABLE. 
+DELETE FROM category2
+WHERE name = 'Action category';
+
+DELETE FROM customer2
+WHERE customer_id = 1;
+
+DELETE FROM customer2
+WHERE customer_id = 3;
+
+DELETE FROM customer2;
+INSERT INTO customer2 SELECT * FROM customer;
+
+
+##$$ WHAT IF YOU WANT TO DELETE ROWS THAT HAVE DEPENDENCY##$$ IT IS IMPOSSIBLE. 
+
+
+##NOTE:DELETE command will remove rows from a table, leaving the table intact.
+##DROP removes the table from the database entirely.
+
+##To practice, it's best to create a new TABLE before you drop it.
+
+CREATE TABLE Insurances (
+     id INT AUTO_INCREMENT,
+     title VARCHAR(100) NOT NULL,
+     effectiveDate DATE NOT NULL,
+     duration INT NOT NULL,
+     amount DEC(10,2) NOT NULL,
+     PRIMARY KEY (id)
+
+
+);
+
+### WE WANT TO DUPLICATE INSURANCE TABLE TWO TIMES FOR THE PURPOSE OF THIS LESSON
+CREATE TABLE IF NOT EXISTS insurances2 LIKE insurances;
+CREATE TABLE IF NOT EXISTS insurances3 LIKE insurances;
+
+##NOW DROP THE ORIGINAL TABLE "insurances"
+DROP TABLE insurances;
+
+## YOU CAN DROP MULTIPLE TABLES BY COMMA(,) SEPERATING. 
+DROP TABLE IF EXISTS insurances2,insurances3;
+
+
+###$$ USE ALTER TABLE TO MODIFY FIELDS: ALTER TABLE ALLOW YOU TO "ADD", "DELETE" OR "MODIFY"
+##ALTER TABLE table_name ADD column(nameofthecolumn) data type
+##ALTER TABLE table_name DROP COLUMN column
+##ALTER TABLE table_name MODIFY COLUMN column data type
+
+##$ LET'S START BY ADDING A COLUMN: TASK: ADD AGE AGAINST CUSTOMER
+ALTER TABLE customer ADD DateofBirth date;
+ALTER TABLE customer DROP COLUMN DateofBirth;
+
+
+ALTER TABLE customer ADD ExpiryDate date;
+
+##ASSUMING we want to DROP the COLUMN we just created
+ALTER TABLE customer DROP COLUMN ExpiryDate;
+
+##Que:#Que: Assuming you get some complaint from Customers that date of
+#birth is a bit intrusive. They want the only year of their birth.
+#To make changes in the DataBase
+ALTER TABLE customer MODIFY COLUMN DateofBirth YEAR;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
